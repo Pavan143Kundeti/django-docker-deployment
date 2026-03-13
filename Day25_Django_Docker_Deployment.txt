@@ -1,0 +1,385 @@
+# Day 25: Deploy Django Web Application as Docker Container
+
+## What We'll Learn Today
+Today we learn how to put a Django web application inside a Docker container. Think of it like packing your lunch box - everything your app needs goes inside one container!
+
+## Before We Start - What You Need to Know
+
+### Previous Classes Recap (Day 23 & 24)
+- What are containers and why they are lightweight
+- How containers are different from Virtual Machines
+- Docker architecture and lifecycle
+- Docker terminology (Docker daemon, Docker Desktop, Docker registry)
+- How to install Docker on EC2 instance
+- Running your first Docker CLI application
+
+**Important**: If you haven't watched Day 23 and 24, please watch them first! They are your foundation.
+
+## Do I Need Programming Knowledge?
+
+### Short Answer: YES, but not expert level!
+
+As a DevOps engineer, you need to understand:
+- How applications work (not write complex code)
+- Where the application gets its requirements from
+- How one service talks to another service
+- Basic application workflow
+
+**Example**: When you see a Django app, you should know:
+- Where is the main code?
+- What dependencies does it need?
+- How does it start?
+- What port does it use?
+
+## Understanding Django Application - Simple Explanation
+
+### What is Django?
+Django is a Python framework to build web applications. Think of it like a toy building kit - it gives you ready-made pieces to build websites quickly.
+
+### Step 1: Install Django
+```bash
+# First install Python, then install Django
+pip install django
+```
+
+### Step 2: Create Project Skeleton
+Django has a tool called `Django Admin` that creates a basic structure for you (like a template).
+
+```bash
+# Create a new project
+django-admin startproject devops
+```
+
+This creates folders and files automatically - you don't write them manually!
+
+### Step 3: Understanding Project Structure
+
+**What gets created:**
+- `settings.py` - All configuration (like settings on your phone)
+  - Which IPs are allowed
+  - Database connection details
+  - Secret keys
+  - Middleware settings
+
+- `urls.py` - Controls which page to show when someone visits a URL
+  - Example: `/demo` shows the demo page
+  - Example: `/admin` shows admin page
+
+### Step 4: Create Your Application
+A project can have multiple applications inside it.
+
+```bash
+# Create an application called 'demo'
+python manage.py startapp demo
+```
+
+This creates:
+- `views.py` - Your actual Python code that does the work
+- `templates` folder - HTML files that users see
+- Other configuration files
+
+### Step 5: Write Your Code
+In `views.py`, you write functions that show web pages:
+
+```python
+def index(request):
+    return render(request, 'index.html')
+```
+
+This means: "When someone visits, show them the index.html page"
+
+### Step 6: Create HTML Template
+Create a `templates` folder and put your HTML files there. This is what users see in their browser.
+
+## The Old Problem (Before Docker)
+
+### What Used to Happen:
+1. Developer writes code on their computer (works fine!)
+2. Sends code to QA team for testing
+3. QA team downloads code
+4. QA team installs 100+ dependencies from `requirements.txt`
+5. **PROBLEM**: Code doesn't work on QA's computer!
+
+### Why This Problem?
+- QA might use Windows, developer used Linux
+- Different Python versions
+- Different library versions
+- "It works on my machine!" problem
+
+## How Docker Solves This Problem
+
+Docker packages EVERYTHING together:
+- Your code
+- Python
+- All dependencies
+- All settings
+
+**Result**: Anyone with Docker can run your app with just 2 commands:
+1. `docker build` - Create the package
+2. `docker run` - Run the package
+
+It doesn't matter if they use Windows, Mac, or Linux!
+
+## DevOps Engineer's Role
+
+### Your Responsibilities:
+1. Analyze the application
+2. Understand what it needs to run
+3. Write a Dockerfile
+4. Build the Docker image
+5. Test the container
+6. Help team members run it
+
+## Writing the Dockerfile - Step by Step
+
+### The Dockerfile Explained (Line by Line)
+
+```dockerfile
+# Step 1: Choose base image (starting point)
+FROM ubuntu
+
+# Step 2: Set working directory (where code will live)
+WORKDIR /app
+
+# Step 3: Copy requirements file first
+COPY requirements.txt .
+
+# Step 4: Copy your source code
+COPY devops/ .
+
+# Step 5: Install Python
+RUN apt-get update && apt-get install -y python3 python3-pip
+
+# Step 6: Install Python dependencies
+RUN pip install -r requirements.txt
+
+# Step 7: Define the command to start app
+ENTRYPOINT ["python3"]
+CMD ["manage.py", "runserver", "0.0.0.0:8000"]
+```
+
+### Why This Order?
+We copy `requirements.txt` first because:
+- Dependencies don't change often
+- Docker can cache this step
+- Makes rebuilding faster
+
+## ENTRYPOINT vs CMD - Important Difference!
+
+### ENTRYPOINT
+- Cannot be changed by users
+- Use for main executable
+- Example: `python3` (we don't want users changing this to `node`)
+
+### CMD
+- Can be changed by users
+- Use for configurable parameters
+- Example: Port number (users might want different port)
+
+### Example:
+```dockerfile
+ENTRYPOINT ["python3"]  # Fixed - cannot change
+CMD ["manage.py", "runserver", "0.0.0.0:8000"]  # Flexible - can change port
+```
+
+**Why?** If port 8000 is busy on someone's computer, they can change it to 8001:
+```bash
+docker run myapp manage.py runserver 0.0.0.0:8001
+```
+
+But they cannot change `python3` to something else!
+
+## Hands-On: Deploy Your Django App
+
+### Step 1: Clone the Repository
+```bash
+git clone <repository-url>
+cd python-web-app
+```
+
+### Step 2: Build Docker Image
+```bash
+docker build -t django-app .
+```
+
+**What happens:**
+- Docker reads your Dockerfile
+- Installs everything
+- Creates an image (like a template)
+
+### Step 3: Run the Container (First Try - Will Fail!)
+```bash
+docker run -it django-app
+```
+
+**Why it fails?** Port is not exposed to outside world!
+
+### Step 4: Run with Port Mapping (Correct Way)
+```bash
+docker run -p 8000:8000 django-app
+```
+
+**What this means:**
+- `-p 8000:8000` - Connect container port 8000 to computer port 8000
+- First 8000 = Your computer's port
+- Second 8000 = Container's port
+
+### Step 5: Open in Browser
+```
+http://<your-ec2-ip>:8000
+```
+
+## Important: Security Group Settings
+
+### Don't Forget This Step!
+If using AWS EC2, you must allow port 8000:
+
+1. Go to EC2 Console
+2. Click on your instance
+3. Click "Security" tab
+4. Click on Security Group
+5. Click "Edit inbound rules"
+6. Add new rule:
+   - Type: Custom TCP
+   - Port: 8000
+   - Source: 0.0.0.0/0 (or your IP only)
+7. Save
+
+**Without this, your app won't be accessible from browser!**
+
+## Key Files in Django Project
+
+### requirements.txt
+Lists all Python packages needed:
+```
+Django==4.2.0
+tzdata==2023.3
+```
+
+### manage.py
+Django's management script - used to run server, create apps, etc.
+
+### settings.py
+All configuration - database, allowed hosts, installed apps
+
+### views.py
+Your Python code that handles requests and shows pages
+
+### templates/
+Folder containing HTML files
+
+## Common Issues and Solutions
+
+### Issue 1: Application Not Accessible
+**Solution**: Check port mapping and security group rules
+
+### Issue 2: Port Already in Use
+**Solution**: Use different port
+```bash
+docker run -p 8001:8000 django-app
+```
+
+### Issue 3: Container Stops Immediately
+**Solution**: Check logs
+```bash
+docker logs <container-id>
+```
+
+## Important Docker Commands
+
+### Build Image
+```bash
+docker build -t myapp .
+```
+
+### List Images
+```bash
+docker images
+```
+
+### Run Container
+```bash
+docker run -p 8000:8000 myapp
+```
+
+### List Running Containers
+```bash
+docker ps
+```
+
+### Stop Container
+```bash
+docker stop <container-id>
+```
+
+### Remove Container
+```bash
+docker rm <container-id>
+```
+
+## Practice Exercise
+
+### Try This Yourself:
+1. Clone the repository
+2. Look at the Dockerfile
+3. Build the image
+4. Run the container
+5. Access in browser
+6. Stop the container
+7. Modify the port and run again
+
+### Experiment:
+- Change the port number
+- Modify the HTML template
+- Rebuild and see changes
+
+## Key Takeaways
+
+1. **Containers solve "works on my machine" problem**
+2. **Dockerfile is a recipe for your container**
+3. **ENTRYPOINT = fixed, CMD = flexible**
+4. **Port mapping is essential** (`-p` flag)
+5. **Security groups must allow the port**
+6. **Same process works for any Django app** (just different dependencies)
+
+## What's Next? (Day 26)
+
+Tomorrow we'll learn:
+- Docker networking
+- More Docker commands
+- Multi-stage Docker builds (to reduce image size)
+- Best practices
+
+## Challenge Question
+
+**How many EC2 instances can you run on a free AWS account?**
+
+Think about it and try to find the answer!
+
+## Tips for Success
+
+1. **Don't just watch - DO IT!** Clone the repo and try yourself
+2. **Break things!** Experiment and learn from errors
+3. **Read error messages** - they tell you what's wrong
+4. **Ask questions** in comments if stuck
+5. **Practice multiple times** until confident
+
+## Summary
+
+Today you learned:
+- Django application basics
+- Why Docker solves deployment problems
+- How to write a Dockerfile for Django
+- Difference between ENTRYPOINT and CMD
+- How to build and run Django in Docker
+- Port mapping and security configuration
+
+**Remember**: If you can containerize one Django app, you can containerize ANY Django app! The process remains the same.
+
+---
+
+**Repository**: Check the GitHub repository for complete code and Dockerfile
+**Video**: Rewatch if needed - repetition builds confidence!
+**Next Class**: Docker networking and advanced commands
+
+Good luck with your practice! 🚀

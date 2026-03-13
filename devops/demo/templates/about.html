@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django Docker App - About</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 700px;
+        }
+        h1 {
+            color: #f5576c;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        h2 {
+            color: #f093fb;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        p, li {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        ul {
+            margin-left: 30px;
+        }
+        .back-link {
+            display: inline-block;
+            background: #f5576c;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            margin-top: 30px;
+            transition: all 0.3s;
+        }
+        .back-link:hover {
+            background: #f093fb;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .tech-stack {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>About This Project</h1>
+        
+        <p>
+            This is a demonstration Django web application designed to teach Docker containerization concepts.
+        </p>
+
+        <h2>🎯 Project Purpose</h2>
+        <p>
+            This project demonstrates how to containerize a Django application using Docker, solving the 
+            "it works on my machine" problem by packaging the application with all its dependencies.
+        </p>
+
+        <div class="tech-stack">
+            <h2>🛠️ Technology Stack</h2>
+            <ul>
+                <li><strong>Framework:</strong> Django 4.2.0</li>
+                <li><strong>Language:</strong> Python 3</li>
+                <li><strong>Container:</strong> Docker</li>
+                <li><strong>Base Image:</strong> Ubuntu</li>
+            </ul>
+        </div>
+
+        <h2>📦 What's Included</h2>
+        <ul>
+            <li>Complete Django project structure</li>
+            <li>Dockerfile for containerization</li>
+            <li>Requirements.txt for dependencies</li>
+            <li>Demo application with views and templates</li>
+            <li>Ready-to-deploy configuration</li>
+        </ul>
+
+        <h2>🚀 How to Run</h2>
+        <p>
+            <strong>1. Build the Docker image:</strong><br>
+            <code>docker build -t django-app .</code>
+        </p>
+        <p>
+            <strong>2. Run the container:</strong><br>
+            <code>docker run -p 8000:8000 django-app</code>
+        </p>
+        <p>
+            <strong>3. Access in browser:</strong><br>
+            <code>http://localhost:8000</code>
+        </p>
+
+        <div style="text-align: center;">
+            <a href="/" class="back-link">← Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django Docker App - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .success {
+            background: #10b981;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .nav-links {
+            margin-top: 30px;
+        }
+        .nav-links a {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        .nav-links a:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .docker-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="docker-icon">🐳</div>
+        <h1>Welcome to Django Docker App!</h1>
+        <div class="success">✅ Your Django app is running successfully in Docker!</div>
+        <p>
+            This is a simple Django web application deployed as a Docker container.
+            You've successfully containerized and deployed your first Django application!
+        </p>
+        <p>
+            <strong>What you've learned:</strong><br>
+            ✓ Django project structure<br>
+            ✓ Writing Dockerfiles<br>
+            ✓ Building Docker images<br>
+            ✓ Running containers with port mapping
+        </p>
+        <div class="nav-links">
+            <a href="/about/">About This Project</a>
+            <a href="/admin/">Admin Panel</a>
+        </div>
+    </div>
+</body>
+</html>
