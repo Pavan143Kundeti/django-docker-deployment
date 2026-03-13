@@ -2,6 +2,17 @@
 
 A simple Django web application containerized with Docker for easy deployment.
 
+## 📸 Project Screenshots
+
+### Home Page
+![Home Page](devops/demo/Assets/Image1.png)
+
+### About Page
+![About Page](devops/demo/Assets/Image2.png)
+
+### Running on AWS EC2
+![AWS Deployment](devops/demo/Assets/Image3.png)
+
 ## 📁 Project Structure
 
 ```
